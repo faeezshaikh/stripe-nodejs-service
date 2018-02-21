@@ -9,10 +9,19 @@ var router = express.Router();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
-router.post('/processpay', function (request, response) {
-    var stripetoken = request.body.stripetoken;
-    var amountpayable = request.body.amount;
-    var charge = stripe.charge.create({
+router.get('/processpay/:tokenid/:amount', function (request, response) {
+//    console.log('Request:' , request);
+
+var stripetoken = request.params.tokenid;
+// stripetoken = 'tok_1Bxl7DAPEFpkLkhTqhvQC0K8';
+var amountpayable = request.params.amount;
+amountpayable = amountpayable * 100;
+console.log('Body params:', JSON.stringify(ropeequest.params) );
+console.log('###########  Received token:',stripetoken);
+console.log('###########  Received amt:',amountpayable);
+//    console.log('Stripe:',stripe);
+ //   console.log('Stripe.Charge:',stripe.charge);
+    var charge = stripe.charges.create({
         amount: amountpayable,
         currency: 'usd',
         description: 'Sample transaction',
@@ -20,8 +29,10 @@ router.post('/processpay', function (request, response) {
     }, function (err, charge) {
         if (err)
             console.log(err);
-        else
+        else{
+	    console.log('SUCCESS',charge);
             response.send({ success: true });
+}
     })
 })
 
